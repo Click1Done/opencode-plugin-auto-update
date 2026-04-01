@@ -1,0 +1,22 @@
+# PowerShell / editor
+.vscode/
+.idea/
+*.user
+*.suo
+
+# Test / logs / generated artifacts
+TestResults/
+*.trx
+*.log
+
+# Local runtime state created by this tool
+.config/
+.cache/
+logs/
+state/
+backups/
+journal/
+
+# OS files
+Thumbs.db
+Desktop.ini

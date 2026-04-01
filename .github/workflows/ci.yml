@@ -1,0 +1,41 @@
+name: ci
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PowerShell modules
+        shell: pwsh
+        run: |
+          Set-PSRepository PSGallery -InstallationPolicy Trusted
+          Install-Module Pester -MaximumVersion 5.7.1 -Scope CurrentUser -Force -SkipPublisherCheck
+          Install-Module PSScriptAnalyzer -Scope CurrentUser -Force -SkipPublisherCheck
+
+      - name: Lint PowerShell scripts
+        shell: pwsh
+        run: |
+          $issues = @()
+          $issues += Invoke-ScriptAnalyzer -Path .\scripts -Recurse
+          $issues += Invoke-ScriptAnalyzer -Path .\tests -Recurse
+          $errors = @($issues | Where-Object Severity -eq 'Error')
+          $warnings = @($issues | Where-Object Severity -eq 'Warning')
+          if ($issues) {
+            $issues | Format-Table -AutoSize
+          }
+          if ($errors.Count -gt 0) {
+            throw "PSScriptAnalyzer reported $($errors.Count) error(s) and $($warnings.Count) warning(s)."
+          } else {
+            Write-Output "PSScriptAnalyzer reported $($errors.Count) error(s) and $($warnings.Count) warning(s)."
+          }
+
+      - name: Run Pester tests
+        shell: pwsh
+        run: |
+          Invoke-Pester .\tests\OpenCodePluginAutoUpdate.Tests.ps1 -CI
