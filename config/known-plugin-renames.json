@@ -1,0 +1,9 @@
+[
+  {
+    "from": "oh-my-opencode",
+    "to": "oh-my-openagent",
+    "reason": "Official project/package rename compatibility rollout",
+    "source": "https://github.com/code-yeongyu/oh-my-openagent/releases/tag/v3.14.0",
+    "preserveVersionSpec": true
+  }
+]
